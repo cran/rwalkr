@@ -4,32 +4,50 @@
 \alias{walk_melb}
 \title{API to Melbourne pedestrian data using R}
 \usage{
-walk_melb(from = to - 6L, to = Sys.Date() - 1L, tz = "")
+walk_melb(from = to - 6L, to = Sys.Date() - 1L, tz = "", session = NULL)
 }
 \arguments{
 \item{from}{Starting date.}
 
 \item{to}{Ending date.}
 
-\item{tz}{Time zone.}
+\item{tz}{Time zone. By default, "" is the current time zone. For this dataset,
+the local time zone is "Australia/Melbourne" which would be the most
+appropriate, depending on OS.}
+
+\item{session}{\code{NULL} or "shiny". For internal use only.}
 }
 \value{
-A data frame including "Sensor", "Date_Time", "Date", "Time",
-"Count" variables.
+A data frame including these variables as follows:
+\itemize{
+\item Sensor: Sensor name (43 sensors up to date)
+\item Date_Time: Date time when the pedestrian counts are recorded
+\item Date: Date associated with Date_Time
+\item Time: Time of day
+\item Count: Hourly counts
+Explicit missingness (\code{NA}) may occur to the data over a specified period.
+}
 }
 \description{
-API to Melbourne pedestrian data using R
+Provides API to Melbourne pedestrian data in a tidy data form.
 }
 \details{
 The data is sourced from \href{https://data.melbourne.vic.gov.au/Transport-Movement/Pedestrian-volume-updated-monthly-/b2ak-trbp}{Melbourne Open Data Portal}.
 At its heart, this function scrapes the data through the
-"https://compedapi.herokuapp.com" api. A progress bar shows the download
-status. Please refer to Melbourne Open Data Portal for more details about
-the dataset and its policy.
+"https://compedapi.herokuapp.com" api. A progress bar shows the approximate
+download status. Please refer to Melbourne Open Data Portal for more
+details about the dataset and its policy.
 }
 \examples{
 \dontrun{
-  ped_df <- walk_melb()
-  head(ped_df)
+  # Retrieve last week data
+  ped_df1 <- walk_melb()
+  head(ped_df1)
+
+  # Retrieve data of a speficied period
+  start_date <- as.Date("2017-07-01")
+  end_date <- start_date + 6L
+  ped_df2 <- walk_melb(from = start_date, to = end_date)
+  head(ped_df2)
 }
 }
