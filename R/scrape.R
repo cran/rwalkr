@@ -1,30 +1,34 @@
-globalVariables(c("Time", "Count", "Sensor", "Date", "Date_Time"))
+globalVariables(c("Time", "Count", "Sensor", "Date", "Date_Time", "walk"))
 
-#' API to Melbourne pedestrian data using R
+#' API using compedapi to Melbourne pedestrian data
 #'
-#' Provides API to Melbourne pedestrian data in a tidy data form.
+#' Provides API using compedapi to Melbourne pedestrian data in a tidy data form.
 #'
 #' @param from Starting date.
 #' @param to Ending date.
 #' @param tz Time zone. By default, "" is the current time zone. For this dataset,
 #'   the local time zone is "Australia/Melbourne" which would be the most
 #'   appropriate, depending on OS.
+#' @param na.rm Logical. `FALSE` is the default suggesting to include `NA` in 
+#'   the dataset. `TRUE` removes the `NA`s.
+#' @param tweak Logical. `FALSE` (the default) leaves the sensor names as is. If
+#'   `TRUE`, they are cleaned up and matched with the ones in [run_melb].
 #' @param session `NULL` or "shiny". For internal use only.
 #'
-#' @details The data is sourced from [Melbourne Open Data Portal](https://data.melbourne.vic.gov.au/Transport-Movement/Pedestrian-volume-updated-monthly-/b2ak-trbp).
-#'   At its heart, this function scrapes the data through the
-#'   "https://compedapi.herokuapp.com" api. A progress bar shows the approximate
-#'   download status. Please refer to Melbourne Open Data Portal for more
-#'   details about the dataset and its policy.
+#' @details It provides API using compedapi, where counts are uploaded on a 
+#'   daily basis. The up-to-date data would be
+#'   till the previous day. The data is sourced from [Melbourne Open Data Portal](https://data.melbourne.vic.gov.au/Transport-Movement/Pedestrian-volume-updated-monthly-/b2ak-trbp). Please 
+#'   refer to Melbourne Open Data Portal for more details about the dataset and 
+#'   its policy.
 #' @return A data frame including these variables as follows:
 #'   * Sensor: Sensor name (43 sensors up to date)
 #'   * Date_Time: Date time when the pedestrian counts are recorded
 #'   * Date: Date associated with Date_Time
 #'   * Time: Time of day
 #'   * Count: Hourly counts
-#'   Explicit missingness (`NA`) may occur to the data over a specified period.
 #'
 #' @export
+#' @seealso [run_melb]
 #'
 #' @examples
 #' \dontrun{
@@ -39,7 +43,8 @@ globalVariables(c("Time", "Count", "Sensor", "Date", "Date_Time"))
 #'   head(ped_df2)
 #' }
 walk_melb <- function(
-  from = to - 6L, to = Sys.Date() - 1L, tz = "", session = NULL
+  from = to - 6L, to = Sys.Date() - 1L, tz = "", na.rm = FALSE, tweak = FALSE,
+  session = NULL
 ) {
   stopifnot(class(from) == "Date" && class(to) == "Date")
   stopifnot(from > as.Date("2009-05-31"))
@@ -69,6 +74,7 @@ walk_melb <- function(
     })
   } else {
     # shiny session
+    stopifnot(shiny::isRunning())
     shiny::withProgress(
       message = "Retrieving data", value = 0, {
         lst_dat <- lapply(urls, function(x) {
@@ -93,6 +99,20 @@ walk_melb <- function(
       Date, paste0(formatC(Time, width = 2, flag = "0"), ":00:00")), tz = tz
     )
   )
+  if (na.rm) df_dat <- dplyr::filter(df_dat, !is.na(Count))
+
+  if (tweak) {
+    dif <- dplyr::filter(sensor_dict, match == FALSE, walk != "NA")
+    seq_sensor <- seq_len(nrow(dif))
+    changed_df <- dplyr::bind_rows(lapply(seq_sensor, function(x) {
+      df_dat[df_dat$Sensor == dif[x, "walk"], "Sensor"] <- dif[x, "run"]
+      df_dat
+    }))
+    same <- dplyr::filter(sensor_dict, match == TRUE)$walk
+    unchanged_df <- dplyr::filter(df_dat, Sensor %in% same)
+    df_dat <- dplyr::bind_rows(unchanged_df, changed_df)
+  }
+
   dplyr::select(df_dat, Sensor, Date_Time, Date, Time, Count)
 }
 
@@ -117,3 +137,22 @@ read_url <- function(url) {
   )
 }
 
+#' Look up sensor names between `run_melb()` and `walk_melb()`
+#'
+#' One-to-one corresponding sensor names between `run_melb()` and `walk_melb()`
+#'
+#' @details Two APIs (Socrata and compedapi) code some sensors using different 
+#'   names. This functions returns a data frame that allows to compare sensor 
+#'   names obtained from these two APIs.
+#' @return A data frame including three columns:
+#'   * run: Sensor names obtained from the `run_melb()` function using Socrata
+#'   * walk: Sensor names obtained from the `walk_melb()` function using compedapi
+#'   * match: whether sensor names are identical or not
+#'
+#' @export
+#'
+#' @examples
+#'   lookup_sensor()
+lookup_sensor <- function() {
+  sensor_dict
+}

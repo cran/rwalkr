@@ -2,9 +2,10 @@
 % Please edit documentation in R/scrape.R
 \name{walk_melb}
 \alias{walk_melb}
-\title{API to Melbourne pedestrian data using R}
+\title{API using compedapi to Melbourne pedestrian data}
 \usage{
-walk_melb(from = to - 6L, to = Sys.Date() - 1L, tz = "", session = NULL)
+walk_melb(from = to - 6L, to = Sys.Date() - 1L, tz = "", na.rm = FALSE,
+  tweak = FALSE, session = NULL)
 }
 \arguments{
 \item{from}{Starting date.}
@@ -14,6 +15,12 @@ walk_melb(from = to - 6L, to = Sys.Date() - 1L, tz = "", session = NULL)
 \item{tz}{Time zone. By default, "" is the current time zone. For this dataset,
 the local time zone is "Australia/Melbourne" which would be the most
 appropriate, depending on OS.}
+
+\item{na.rm}{Logical. \code{FALSE} is the default suggesting to include \code{NA} in
+the dataset. \code{TRUE} removes the \code{NA}s.}
+
+\item{tweak}{Logical. \code{FALSE} (the default) leaves the sensor names as is. If
+\code{TRUE}, they are cleaned up and matched with the ones in \link{run_melb}.}
 
 \item{session}{\code{NULL} or "shiny". For internal use only.}
 }
@@ -25,18 +32,17 @@ A data frame including these variables as follows:
 \item Date: Date associated with Date_Time
 \item Time: Time of day
 \item Count: Hourly counts
-Explicit missingness (\code{NA}) may occur to the data over a specified period.
 }
 }
 \description{
-Provides API to Melbourne pedestrian data in a tidy data form.
+Provides API using compedapi to Melbourne pedestrian data in a tidy data form.
 }
 \details{
-The data is sourced from \href{https://data.melbourne.vic.gov.au/Transport-Movement/Pedestrian-volume-updated-monthly-/b2ak-trbp}{Melbourne Open Data Portal}.
-At its heart, this function scrapes the data through the
-"https://compedapi.herokuapp.com" api. A progress bar shows the approximate
-download status. Please refer to Melbourne Open Data Portal for more
-details about the dataset and its policy.
+It provides API using compedapi, where counts are uploaded on a
+daily basis. The up-to-date data would be
+till the previous day. The data is sourced from \href{https://data.melbourne.vic.gov.au/Transport-Movement/Pedestrian-volume-updated-monthly-/b2ak-trbp}{Melbourne Open Data Portal}. Please
+refer to Melbourne Open Data Portal for more details about the dataset and
+its policy.
 }
 \examples{
 \dontrun{
@@ -50,4 +56,7 @@ details about the dataset and its policy.
   ped_df2 <- walk_melb(from = start_date, to = end_date)
   head(ped_df2)
 }
+}
+\seealso{
+\link{run_melb}
 }

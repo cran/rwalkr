@@ -3,8 +3,14 @@
 #' Provides a GUI to download data of selected sensors over a specified period
 #' as a CSV file, accompanied with basic visualisation. 
 #'
+#' @details It offers some basic plots to give a glimpse of the data over a 
+#' short time period, and so it uses [walk_melb] to pull the data. In
+#' order to be reproducible, scripting using `walk_melb` or `run_melb` is
+#' recommended.
+#'
 #' @return A shiny app.
 #' @export
+#' @seealso [walk_melb], [run_melb]
 #'
 #' @examples
 #' \dontrun{
@@ -44,7 +50,7 @@ shine_melb <- function() {
         shiny::hr(),
         shiny::selectizeInput(
           "SensorInfo", "Sensor filter:",
-          choices = sensor$sensor,
+          choices = sensor_df$sensor,
           multiple = TRUE
         ),
         shiny::downloadButton("downloadCSV", "Download CSV")
@@ -117,7 +123,7 @@ shine_melb <- function() {
 
     output$drawMarker <- plotly::renderPlotly({
       na_df <- ped_df() %>%
-        dplyr::left_join(sensor, by = c("Sensor" = "sensor")) %>%
+        dplyr::left_join(sensor_df, by = c("Sensor" = "sensor")) %>%
         dplyr::mutate(NA_ind = is.na(Count))
       miss_marker <- plotly::plot_ly(
         na_df, hoverinfo = "text",
