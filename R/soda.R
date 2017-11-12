@@ -27,7 +27,7 @@ globalVariables(c(
 #'   till the previous month. The data is sourced from [Melbourne Open Data Portal](https://data.melbourne.vic.gov.au/Transport-Movement/Pedestrian-volume-updated-monthly-/b2ak-trbp). Please 
 #'   refer to Melbourne Open Data Portal for more details about the dataset and 
 #'   its policy.
-#' @return A data frame including these variables as follows:
+#' @return A tibble including these variables as follows:
 #'   * Sensor: Sensor name (46 sensors up to date)
 #'   * Date_Time: Date time when the pedestrian counts are recorded
 #'   * Date: Date associated with Date_Time
@@ -88,12 +88,12 @@ run_melb <- function(year = NULL, sensor = NULL, tz = "", na.rm = FALSE,
     response <- httr::GET(p_url)
     content <- httr::content(response, as = "text", type = "text/csv", 
       encoding = "UTF-8")
-    dat <- utils::read.csv(
+    dat <- tibble::as_tibble(utils::read.csv(
       textConnection(content), 
       colClasses = rep("character", 4L),
       stringsAsFactors = FALSE,
       nrows = limit
-    )
+    ))
     p$tick()$print()
     dat
   })
@@ -117,18 +117,10 @@ run_melb <- function(year = NULL, sensor = NULL, tz = "", na.rm = FALSE,
 
   if (!na.rm) {
     # Make implicit missingness to explicit
-    full_time <- seq.POSIXt(from = from_time, to = to_time, by = "hour")
-    len_time <- length(full_time)
-    available_sensors <- unique(ped$Sensor)
-    len_sensor <- length(available_sensors)
-    full_df <- data.frame(
-      Sensor = available_sensors[rep.int(
-        seq_along(available_sensors), len_time
-      )],
-      Date_Time = rep(full_time, each = len_sensor),
-      stringsAsFactors = FALSE
+    ped <- tidyr::complete(ped,
+      Date_Time = seq.POSIXt(from = from_time, to = to_time, by = "hour"),
+      Sensor
     )
-    ped <- dplyr::left_join(full_df, ped, by = c("Sensor", "Date_Time"))
     ped <- dplyr::mutate(
       ped, 
       Date = as.Date.POSIXct(Date_Time, tz = tz),
