@@ -31,9 +31,9 @@ It provides API using \href{https://dev.socrata.com/foundry/data.melbourne.vic.g
 }
 \examples{
 \dontrun{
-  pull_sensor()
+pull_sensor()
 }
 }
 \seealso{
-\link{run_melb}
+\link{melb_walk_fast}
 }

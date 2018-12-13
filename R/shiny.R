@@ -9,23 +9,19 @@
 #'
 #' @return A shiny app.
 #' @export
-#' @seealso [walk_melb], [run_melb]
+#' @seealso [melb_walk], [melb_walk_fast]
 #'
-#' @examples
-#' \dontrun{
-#'   shine_melb()
-#' }
-shine_melb <- function() {
+melb_shine <- function() {
   if (!(requireNamespace("shiny", quietly = TRUE) && 
         utils::packageVersion("shiny") >= "1.0.4")) {
     stop(
-      "Packages shiny (>= v1.0.4) required for shine_melb()", ".\n",
+      "Packages shiny (>= v1.0.4) required for melb_shine()", ".\n",
       "Please install and try again.", call. = FALSE
     )
   }
   if (!requireNamespace("plotly", quietly = TRUE)) {
     stop(
-      "Packages plotly required for shine_melb()", ".\n",
+      "Packages plotly required for melb_shine()", ".\n",
       "Please install and try again.", call. = FALSE
     )
   }
