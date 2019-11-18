@@ -9,10 +9,10 @@ globalVariables(c("Time", "Count", "Sensor", "Date", "Date_Time", "walk"))
 #' @param session `NULL` or "shiny". For internal use only.
 #' @inheritParams melb_walk_fast
 #'
-#' @details It provides API using compedapi, where counts are uploaded on a 
+#' @details It provides API using compedapi, where counts are uploaded on a
 #'   daily basis. The up-to-date data would be
-#'   till the previous day. The data is sourced from [Melbourne Open Data Portal](https://data.melbourne.vic.gov.au/Transport-Movement/Pedestrian-volume-updated-monthly-/b2ak-trbp). Please 
-#'   refer to Melbourne Open Data Portal for more details about the dataset and 
+#'   till the previous day. The data is sourced from [Melbourne Open Data Portal](https://data.melbourne.vic.gov.au/Transport-Movement/Pedestrian-volume-updated-monthly-/b2ak-trbp). Please
+#'   refer to Melbourne Open Data Portal for more details about the dataset and
 #'   its policy.
 #' @return A tibble including these variables as follows:
 #'   * Sensor: Sensor name (43 sensors up to date)
@@ -35,11 +35,8 @@ globalVariables(c("Time", "Count", "Sensor", "Date", "Date_Time", "walk"))
 #' melb_walk(from = start_date, to = end_date)
 #' }
 melb_walk <- function(
-  from = to - 6L, to = Sys.Date() - 1L, tz = "", na.rm = FALSE, session = NULL
+  from = to - 6L, to = Sys.Date() - 1L, na.rm = FALSE, session = NULL
 ) {
-  if (tz != "") {
-    warning("Argument `tz` ignored.")
-  }
   tz <- "Australia/Melbourne"
   stopifnot(class(from) == "Date" && class(to) == "Date")
   stopifnot(from > as.Date("2009-05-31"))
@@ -118,24 +115,4 @@ read_url <- function(url) {
     colClasses = c("character", rep("integer", 24)),
     na.strings = "N/A", stringsAsFactors = FALSE, check.names = FALSE
   )
-}
-
-#' Look up sensor names between `melb_walk_fast()` and `melb_walk()`
-#'
-#' One-to-one corresponding sensor names between `melb_walk_fast()` and `melb_walk()`
-#'
-#' @details Two APIs (Socrata and compedapi) code some sensors using different 
-#'   names. This functions returns a data frame that allows to compare sensor 
-#'   names obtained from these two APIs.
-#' @return A data frame including three columns:
-#'   * run: Sensor names obtained from the `melb_walk_fast()` function using Socrata
-#'   * walk: Sensor names obtained from the `melb_walk()` function using compedapi
-#'   * match: whether sensor names are identical or not
-#'
-#' @export
-#'
-#' @examples
-#' lookup_sensor()
-lookup_sensor <- function() {
-  sensor_dict
 }
