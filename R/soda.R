@@ -165,6 +165,7 @@ melb_walk_fast <- function(year = NULL, sensor = NULL, na.rm = FALSE,
 #' \dontrun{
 #' melb_walk_directional()
 #' }
+#' @export
 melb_walk_directional <- function(app_token = NULL) {
   tz <- "Australia/Melbourne"
   base_url <- "https://data.melbourne.vic.gov.au/resource/d6mv-s43h.csv"
@@ -239,5 +240,5 @@ pull_sensor <- function(app_token = NULL) {
       strptime(installation_date, format = "%Y-%m-%dT%H:%M:%S"),
       tz = "Australia/Melbourne")
   )
-  sensor_info
+  dplyr::as_tibble(sensor_info)
 }
