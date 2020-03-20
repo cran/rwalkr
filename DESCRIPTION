@@ -1,7 +1,7 @@
 Type: Package
 Package: rwalkr
 Title: API to Melbourne Pedestrian Data
-Version: 0.5.1
+Version: 0.5.2
 Authors@R: 
     person(given = "Earo",
            family = "Wang",
@@ -20,8 +20,8 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.0.2
 NeedsCompilation: no
-Packaged: 2020-01-07 11:50:01 UTC; earo
+Packaged: 2020-03-20 07:33:49 UTC; earo
 Author: Earo Wang [aut, cre] (<https://orcid.org/0000-0001-6448-5260>)
 Maintainer: Earo Wang <earo.wang@gmail.com>
 Repository: CRAN
-Date/Publication: 2020-01-08 06:50:03 UTC
+Date/Publication: 2020-03-20 08:10:02 UTC
