@@ -1,11 +1,11 @@
-bf4b569c49e4abe2e16a6cbe9ab2272d *DESCRIPTION
+0bff2d71f7caba2078a2d1dbd51e4c1f *DESCRIPTION
 f7afbf11aaa25bf04d1adf7ca72bfd9d *LICENSE
 d451f05f399fef077441c813613171e7 *NAMESPACE
-63e9a07ea67569ae42965645445ad7b2 *NEWS.md
-269efd0591d60164109b73bffeb40dc6 *R/scrape.R
+23f5ab801664c31518a7ec23414b2124 *NEWS.md
+624d9c4b837cb0a88ebf7057b44c1d02 *R/scrape.R
 9c21e9c04d57d771c22fbb1e2180ed3e *R/shiny.R
 8ab8a5a2cfe120385a14dcdc7a6b9ee1 *R/soda.R
-17efb539c721a8f015fd3ca21ed052fa *README.md
+a335299dc73cd89cb925dcbcc3d776ee *README.md
 9a4d7cb4bab06fccf90633f6b40a97f5 *man/figure/plot-1.png
 9949cf7c1ad72d32cd625b365a65cf88 *man/figure/shiny.png
 21dc9a4c7de0c1d9f9207603d727acc3 *man/melb_shine.Rd
