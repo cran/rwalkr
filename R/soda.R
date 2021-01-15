@@ -27,7 +27,7 @@ globalVariables(c(
 #' @return A tibble including these variables as follows:
 #' * `Sensor`: Sensor name
 #' * `Date_Time`: Date time when the pedestrian counts are recorded
-#' * `Date`: Date associated with `date_Time`
+#' * `Date`: Date associated with `Date_Time`
 #' * `Time`: Time of day
 #' * `Count`: Hourly counts
 #'
@@ -74,7 +74,8 @@ melb_walk_fast <- function(year = NULL, sensor = NULL, na.rm = FALSE,
   # roughly the number of pages going through
   npages <- ceiling((366L * 24L * nsensors * length(year)) / limit)
 
-  p <- dplyr::progress_estimated(npages)
+  p <- progress::progress_bar$new(total = npages,
+    format = "downloading [:bar] :percent eta: :eta")
   lst_dat <- lapply(seq_len(npages), function(x) {
     offset <- sprintf("%i", limit * (x - 1))
     update_query <- paste0(query, " OFFSET ", offset)
@@ -91,7 +92,7 @@ melb_walk_fast <- function(year = NULL, sensor = NULL, na.rm = FALSE,
       stringsAsFactors = FALSE,
       nrows = limit
     ))
-    p$tick()$print()
+    p$tick()
     dat
   })
 
