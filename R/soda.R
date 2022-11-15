@@ -50,7 +50,7 @@ melb_walk_fast <- function(year = NULL, sensor = NULL, na.rm = FALSE,
   if (is.null(year)) {
     year <- this_year
   }
-  stopifnot(year > 2008 && year < (this_year + 1L))
+  stopifnot(all(year > 2008 & year < (this_year + 1L)))
   base_url <- "https://data.melbourne.vic.gov.au/resource/mxb8-wn4w.csv?"
   sel_cols <- paste(
     "SELECT sensor_name AS Sensor,",
@@ -99,9 +99,8 @@ melb_walk_fast <- function(year = NULL, sensor = NULL, na.rm = FALSE,
   ped <- dplyr::bind_rows(lst_dat)
   ped <- dplyr::mutate(
     ped,
-    Date_Time = as.POSIXct(strptime(date_time, format = "%Y-%m-%dT%H:%M:%S"),
-      tz = tz),
-    date_time = NULL,
+    Date_Time = as.POSIXct(strptime(Date_Time, format = "%Y-%m-%dT%H:%M:%S"),
+      tz = tz)
   )
   from_time <- as.POSIXct(paste0(min(year, na.rm = TRUE), "-01-01 00:00"),
       tz = tz)
